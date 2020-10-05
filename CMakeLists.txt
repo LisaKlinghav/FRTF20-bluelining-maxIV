@@ -12,6 +12,7 @@ find_package(catkin REQUIRED COMPONENTS
   actionlib_msgs
   message_generation 
   std_msgs
+  geometry_msgs
 )
 
 ## System dependencies are found with CMake's conventions
@@ -70,6 +71,7 @@ add_service_files(
 ## Generate added messages and services with any dependencies listed here
 generate_messages(
   DEPENDENCIES
+  geometry_msgs
   std_msgs  # Or other packages containing msgs
 )
 
@@ -105,7 +107,7 @@ generate_messages(
 catkin_package(
 #  INCLUDE_DIRS include
 #  LIBRARIES FRTF20-bluelining-maxIV
-  CATKIN_DEPENDS rospy message_runtime std_msgs
+  CATKIN_DEPENDS rospy message_runtime std_msgs geometry_msgs
 #  DEPENDS system_lib
 )
 
