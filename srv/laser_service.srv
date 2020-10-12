@@ -1,5 +1,4 @@
-bool find
+
 ---
 bool success
-geometry_msgs/Pose currentPos
-geometry_msgs/Pose nextPos
+geometry_msgs/Pose distanceToGo

@@ -10,11 +10,8 @@ def callback(msg):
     # Gets the robot location in the enviroment
     robotOdom = rospy.wait_for_message('/odom', Odometry)
 
-    # TODO: Get laserdata to determin our location
-    response.currentPos = robotOdom.pose.pose
-    if msg.find:
-        response.nextPos = robotOdom.pose.pose
-        response.nextPos.position.x = 1
+    # TODO: Get laserdata to determin distances to go
+    response.distanceToGo = robotOdom.pose.pose
 
     response.success = True
     return response
