@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Twist
-from FRTF20blueliningmaxIV.srv import laser_serviceRequest, action_serviceRequest
+from FRTF20blueliningmaxIV.srv import laser_service, action_service
 # For testing the action service
 from geometry_msgs.msg import Pose
 
@@ -14,18 +14,10 @@ pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
 rate = rospy.Rate(10)
 
 # For testing our action server
-class ActionTest:
-    def __init__(self):
-        rospy.Subscriber("action", Pose, self.callback)
-        self.distances = Pose()
-
-    def callback(self, msg):
-        self.distances = msg
-
-    def get_distances(self):
-        return self.distances
-    
-actionTest = ActionTest()
+xs = [1000, 500, 300, 200, -100, 0]
+zs = [700, 700, 400, 100, -50, 0]
+index = 0
+time = 0
 
 while not rospy.is_shutdown():
     msg = Twist() # Message to move the robot
@@ -33,12 +25,18 @@ while not rospy.is_shutdown():
     # laserReq = laser_serviceRequest()
     # distances = rospy.ServiceProxy('laser_service', laserReq)
 
+    actionService = rospy.ServiceProxy('action_service', action_service)
+    actionReq = Pose()
+    actionReq.position.x = xs[index]
+    actionReq.position.z = zs[index]
+    action = actionService(actionReq)
 
-    actionReq = action_serviceRequest()
-    actionReq.distanceToGo = actionReq.get_distances()
+    time += 1
 
-    actionResp = rospy.ServiceProxy('action_service', actionReq)
-    action = actionResp.action
+    if index < 5 and time % 1000 == 0:
+        index += 1
+
+    action = action.action
 
     if action == "forward":
         msg.linear.x = 1
@@ -46,10 +44,10 @@ while not rospy.is_shutdown():
         msg.linear.x = -1
     elif action == "left":
         msg.linear.y = 1
-        msg.angular.z = 0.2
+        msg.angular.z = 0.15
     elif action == "right":
         msg.linear.y = -1 
-        msg.angular.z = -0.2
+        msg.angular.z = -0.15
 
     pub.publish(msg)
     rate.sleep()
