@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Twist
+from sensor_msgs.msg import Imu
 from FRTF20blueliningmaxIV.srv import laser_service, action_service
 # For testing the action service
 from geometry_msgs.msg import Pose
@@ -66,6 +67,9 @@ rospy.init_node('main', anonymous=True)
 rospy.wait_for_service('action_service')
 rospy.wait_for_service('laser_service')
 
+# Initial orentation
+imuInit = rospy.wait_for_message("/imu", Imu)
+
 pub = rospy.Publisher('/cmd_vel', Twist, queue_size=1)
 
 rate = rospy.Rate(10)
@@ -99,7 +103,16 @@ while not rospy.is_shutdown():
 
     action = action.action
 
-    if action == "forward":
+    # Get orentation
+    imu = rospy.wait_for_message("/imu", Imu)
+    rotation = imu.orientation.w - imuInit.orientation.w
+
+
+    if rotation > 0 and abs(rotation) > 0.001:
+        msg.angular.z = 0.1
+    elif rotation < 0 and abs(rotation) > 0.001:
+        msg.angular.z = -0.1
+    elif action == "forward":
         msg.linear.x = signs[0] * 1
     elif action == "backward":
         msg.linear.x = signs[0] * -1
