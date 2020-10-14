@@ -11,9 +11,9 @@ def callback(msg):
     x = distances.position.x
     z = distances.position.z
 
-    ##if math.sqrt(x**2 + z**2) < 100: # Distance small enough for 3d printer to make the dot
-    ##    response.action = "stop"
-    if abs(x) > abs(z): # We move in the largest error
+    if (x**2 + z**2)**0.5 < 100: # Distance small enough for 3d printer to make the dot
+       response.action = "stop"
+    elif abs(x) > abs(z): # We move in the largest error
         if x > 0:
             response.action = "forward"
         else:

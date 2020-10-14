@@ -91,10 +91,11 @@ while not rospy.is_shutdown():
     actionReq.position.z = zs[index]
     action = actionService(actionReq)
 
-    time += 1
+    time = 1 + time
+    rospy.loginfo(time)
 
-    if index < 5 and time % 1000 == 0:
-        index += 1
+    if index < 5 and time % 100 == 0:
+        index = 1 + index
 
     action = action.action
 
