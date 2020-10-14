@@ -33,7 +33,7 @@ def callback(msg):
     positionMessage = positionUDP.get_message()
     if not distancesMessage or not positionMessage:
         response.success = False
-        
+
     else:
         # X,9.6879549857494169e+002,Y,-2.1040698523077076e+003,Z,-6.7986554237869018e+002 example line from laser
         distancesSplit = distancesMessage[0].split(",")
@@ -60,7 +60,7 @@ def callback(msg):
 rospy.init_node('laser_service', anonymous=True)
 srv = rospy.Service('laser_service', laser_service, callback)
 
-localIP     = "192.168.79.75"
+localIP     = "192.168.100.102"
 localPortDistances = 65432
 localPortPosition = 65433
 bufferSize  = 1024
