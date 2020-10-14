@@ -105,13 +105,13 @@ while not rospy.is_shutdown():
 
     # Get orentation
     imu = rospy.wait_for_message("/imu", Imu)
-    rotation = imu.orientation.w - imuInit.orientation.w
+    rotation = imu.orientation.w - imuInit.orientation.w 
 
 
-    if rotation > 0 and abs(rotation) > 0.001:
-        msg.angular.z = 0.1
-    elif rotation < 0 and abs(rotation) > 0.001:
+    if rotation > 0 and abs(rotation) > 0.01:
         msg.angular.z = -0.1
+    elif rotation < 0 and abs(rotation) > 0.01:
+        msg.angular.z = 0.1
     elif action == "forward":
         msg.linear.x = signs[0] * 1
     elif action == "backward":
