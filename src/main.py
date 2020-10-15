@@ -62,6 +62,27 @@ def init():
     else:
         signs[1] = -1
 
+    # Calculate rotation
+    imuOld = rospy.wait_for_message("/imu", Imu)
+    # Rotate positive
+    msg = Twist()
+    msg.angular.z = 0.1
+    pub.publish(msg)
+    rospy.sleep(1)
+    msg.angular.z = 0
+    pub.publish(msg)
+    rospy.sleep(0.5)
+
+    imuNew = rospy.wait_for_message("/imu", Imu)
+
+    # Calculate the rotation
+    rotation = imuNew.orientation.w - imuOld.orientation.w
+    if rotation > 0:
+        rotSign = 1
+    else:
+        rotSign = -1
+
+    return signs, rotSign
 
 rospy.init_node('main', anonymous=True)
 rospy.wait_for_service('action_service')
@@ -76,6 +97,10 @@ rate = rospy.Rate(10)
 
 # Signs for forward/right
 signs = [1, 1]
+# Signs for rotation
+rotSign = 1
+
+# signs, rotSign = init()
 
 # For testing our action server
 xs = [1000, 500, 300, 200, -100, 0]
@@ -83,45 +108,54 @@ zs = [700, 700, 400, 100, -50, 0]
 index = 0
 time = 0
 
+# start stop topic
+start = False
+def start_callback(msg):
+    start = msg
+startSub = rospy.Subscriber("/start", bool, start_callback)
+
+
 while not rospy.is_shutdown():
-    msg = Twist() # Message to move the robot
+    if start:
+        msg = Twist() # Message to move the robot
 
-    # laserReq = laser_serviceRequest()
-    # distances = rospy.ServiceProxy('laser_service', laserReq)
+        # laserReq = laser_serviceRequest()
+        # distances = rospy.ServiceProxy('laser_service', laserReq)
 
-    actionService = rospy.ServiceProxy('action_service', action_service)
-    actionReq = Pose()
-    actionReq.position.x = xs[index]
-    actionReq.position.z = zs[index]
-    action = actionService(actionReq)
+        actionService = rospy.ServiceProxy('action_service', action_service)
+        actionReq = Pose()
+        actionReq.position.x = xs[index]
+        actionReq.position.z = zs[index]
+        action = actionService(actionReq)
 
-    time = 1 + time
-    rospy.loginfo(time)
+        time = 1 + time
+        rospy.loginfo(time)
 
-    if index < 5 and time % 100 == 0:
-        index = 1 + index
+        if index < 5 and time % 100 == 0:
+            index = 1 + index
 
-    action = action.action
+        action = action.action
 
-    # Get orentation
-    imu = rospy.wait_for_message("/imu", Imu)
-    rotation = imu.orientation.w - imuInit.orientation.w 
+        # Get orentation
+        imu = rospy.wait_for_message("/imu", Imu)
+        rotation = imu.orientation.w - imuInit.orientation.w 
 
 
-    if rotation > 0 and abs(rotation) > 0.01:
-        msg.angular.z = -0.1
-    elif rotation < 0 and abs(rotation) > 0.01:
-        msg.angular.z = 0.1
-    elif action == "forward":
-        msg.linear.x = signs[0] * 1
-    elif action == "backward":
-        msg.linear.x = signs[0] * -1
-    elif action == "left":
-        msg.linear.y = signs[1] * 1
-        msg.angular.z = signs[1] * 0.15
-    elif action == "right":
-        msg.linear.y = signs[1] * -1 
-        msg.angular.z = signs[1] * -0.15
+        if rotation > 0 and abs(rotation) > 0.01:
+            msg.angular.z = rotSign * -0.1
+        elif rotation < 0 and abs(rotation) > 0.01:
+            msg.angular.z = rotSign * 0.1
+        elif action == "forward":
+            msg.linear.x = signs[0] * 1
+        elif action == "backward":
+            msg.linear.x = signs[0] * -1
+        elif action == "left":
+            msg.linear.y = signs[1] * 1
+            msg.angular.z = signs[1] * 0.15
+        elif action == "right":
+            msg.linear.y = signs[1] * -1 
+            msg.angular.z = signs[1] * -0.15
 
-    pub.publish(msg)
+        pub.publish(msg)
+
     rate.sleep()
