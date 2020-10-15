@@ -5,6 +5,7 @@ from sensor_msgs.msg import Imu
 from FRTF20blueliningmaxIV.srv import laser_service, action_service
 # For testing the action service
 from geometry_msgs.msg import Pose
+from std_msgs.msg import Bool
 
 # We need to establish directions, simple test drive forwards/left 
 # and see how position of robot changes in laser coordinates
@@ -112,7 +113,7 @@ time = 0
 start = False
 def start_callback(msg):
     start = msg
-startSub = rospy.Subscriber("/start", bool, start_callback)
+startSub = rospy.Subscriber("/start", Bool, start_callback)
 
 
 while not rospy.is_shutdown():
