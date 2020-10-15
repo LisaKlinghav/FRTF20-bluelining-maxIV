@@ -102,7 +102,7 @@ rotSign = 1
 
 # signs, rotSign = init()
 
-# For testing our action server
+# For testing our action server without laser
 xs = [1000, 500, 300, 200, -100, 0]
 zs = [700, 700, 400, 100, -50, 0]
 index = 0
@@ -128,8 +128,8 @@ while not rospy.is_shutdown():
         actionReq.position.z = zs[index]
         action = actionService(actionReq)
 
+        # Only for testing our action server without laser_service
         time = 1 + time
-        rospy.loginfo(time)
 
         if index < 5 and time % 100 == 0:
             index = 1 + index

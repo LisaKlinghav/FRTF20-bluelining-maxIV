@@ -1,7 +1,6 @@
 #!/usr/bin/env python
 import rospy
 from geometry_msgs.msg import Pose
-from nav_msgs.msg import Odometry
 from FRTF20blueliningmaxIV.srv import laser_serviceResponse, laser_service
 import socket
 
@@ -35,6 +34,7 @@ def callback(msg):
         response.success = False
 
     else:
+        # TODO: Kanske behöver ta tillhänsyn tidsstämplar. Men finns god chans att det inte behövs
         # X,9.6879549857494169e+002,Y,-2.1040698523077076e+003,Z,-6.7986554237869018e+002 example line from laser
         distancesSplit = distancesMessage[0].split(",")
         distanceX = float(distancesSplit[1])
@@ -65,7 +65,9 @@ localPortDistances = 65432
 localPortPosition = 65433
 bufferSize  = 1024
 
+# Distances kommer vara error ifrån punken vi ska till i förhållande till vår position
 distancesUDP = UDP_connect(localIP, localPortDistances, bufferSize)
+# Position kommer vara kordinater på vår position i förhållande till laser
 positionUDP = UDP_connect(localIP, localPortPosition, bufferSize)
 
 rospy.spin()
