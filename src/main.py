@@ -117,46 +117,46 @@ startSub = rospy.Subscriber("/start", Bool, start_callback)
 
 
 while not rospy.is_shutdown():
-    if start:
-        msg = Twist() # Message to move the robot
+    # if start:
+    msg = Twist() # Message to move the robot
 
-        # laserReq = laser_serviceRequest()
-        # distances = rospy.ServiceProxy('laser_service', laserReq)
+    # laserReq = laser_serviceRequest()
+    # distances = rospy.ServiceProxy('laser_service', laserReq)
 
-        actionService = rospy.ServiceProxy('action_service', action_service)
-        actionReq = Pose()
-        actionReq.position.x = xs[index]
-        actionReq.position.z = zs[index]
-        action = actionService(actionReq)
+    actionService = rospy.ServiceProxy('action_service', action_service)
+    actionReq = Pose()
+    actionReq.position.x = xs[index]
+    actionReq.position.z = zs[index]
+    action = actionService(actionReq)
 
-        # Only for testing our action server without laser_service
-        time = 1 + time
+    # Only for testing our action server without laser_service
+    time = 1 + time
 
-        if index < 5 and time % 100 == 0:
-            index = 1 + index
+    if index < 5 and time % 100 == 0:
+        index = 1 + index
 
-        action = action.action
+    action = action.action
 
-        # Get orentation
-        imu = rospy.wait_for_message("/imu", Imu)
-        rotation = imu.orientation.w - imuInit.orientation.w 
+    # Get orentation
+    imu = rospy.wait_for_message("/imu", Imu)
+    rotation = imu.orientation.w - imuInit.orientation.w 
 
 
-        if rotation > 0 and abs(rotation) > 0.01:
-            msg.angular.z = rotSign * -0.1
-        elif rotation < 0 and abs(rotation) > 0.01:
-            msg.angular.z = rotSign * 0.1
-        elif action == "forward":
-            msg.linear.x = signs[0] * 1
-        elif action == "backward":
-            msg.linear.x = signs[0] * -1
-        elif action == "left":
-            msg.linear.y = signs[1] * 1
-            msg.angular.z = signs[1] * 0.15
-        elif action == "right":
-            msg.linear.y = signs[1] * -1 
-            msg.angular.z = signs[1] * -0.15
+    if rotation > 0 and abs(rotation) > 0.01:
+        msg.angular.z = rotSign * -0.1
+    elif rotation < 0 and abs(rotation) > 0.01:
+        msg.angular.z = rotSign * 0.1
+    elif action == "forward":
+        msg.linear.x = signs[0] * 1
+    elif action == "backward":
+        msg.linear.x = signs[0] * -1
+    elif action == "left":
+        msg.linear.y = signs[1] * 1
+        msg.angular.z = signs[1] * 0.15
+    elif action == "right":
+        msg.linear.y = signs[1] * -1 
+        msg.angular.z = signs[1] * -0.15
 
-        pub.publish(msg)
+    pub.publish(msg)
 
     rate.sleep()
