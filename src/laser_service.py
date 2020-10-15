@@ -34,7 +34,7 @@ def callback(msg):
         response.success = False
 
     else:
-        # TODO: Kanske behöver ta tillhansyn tidsstamplar. Men finns god chans att det inte behovs
+        # TODO: Might need to consider timestamps but we think it should work without
         # X,9.6879549857494169e+002,Y,-2.1040698523077076e+003,Z,-6.7986554237869018e+002 example line from laser
         distancesSplit = distancesMessage[0].split(",")
         distanceX = float(distancesSplit[1])
@@ -65,9 +65,9 @@ localPortDistances = 65432
 localPortPosition = 65433
 bufferSize  = 1024
 
-# Distances kommer vara error ifran punken vi ska till i forhallande till vår position
+# Distances are the error in different axis to the point we are going to
 distancesUDP = UDP_connect(localIP, localPortDistances, bufferSize)
-# Position kommer vara kordinater pa var position i forhallande till laser
+# Position will be the coordinates we are currently at according to the laser
 positionUDP = UDP_connect(localIP, localPortPosition, bufferSize)
 
 rospy.spin()

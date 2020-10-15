@@ -11,8 +11,8 @@ def callback(msg):
     x = distances.position.x
     z = distances.position.z
 
-    # Denna gräns måste ändras så att 3d printer kommer tillräckligt nära för att göra blueline
-    # Värdet kommer vara i samma mått som laser förmodligen mm
+    # This limit needs to be adjusted for the 3d printer to be able to reach the position
+    # The value is mostlikly in mm but is the same as the laser sends
     if (x**2 + z**2)**0.5 < 40: # Distance small enough for 3d printer to make the dot
        response.action = "stop"
     elif abs(x) > abs(z): # We move in the largest error
