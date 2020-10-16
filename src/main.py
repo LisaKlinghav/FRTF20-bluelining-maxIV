@@ -5,6 +5,7 @@ from sensor_msgs.msg import Imu
 from FRTF20blueliningmaxIV.srv import laser_service, action_service
 # For testing the action service
 from geometry_msgs.msg import Pose
+from std_msgs.msg import Bool
 
 # We need to establish directions, simple test drive forwards/left 
 # and see how position of robot changes in laser coordinates
@@ -102,7 +103,7 @@ rotSign = 1
 
 # signs, rotSign = init()
 
-# For testing our action server
+# For testing our action server without laser
 xs = [1000, 500, 300, 200, -100, 0]
 zs = [700, 700, 400, 100, -50, 0]
 index = 0
@@ -110,13 +111,16 @@ time = 0
 
 # start stop topic
 start = False
+def start_callback(): # empty callback
+    return
 startSub = rospy.Subscriber("/start", Bool, start_callback)
 
 
 while not rospy.is_shutdown():
-    start = rospy.wait_for_message("/start", Bool)
+    # Might 
+    start = rospy.wait_for_message("/start", Bool, 0.1)
+    msg = Twist() # Message to move the robot
     if start:
-        msg = Twist() # Message to move the robot
 
         # laserReq = laser_serviceRequest()
         # distances = rospy.ServiceProxy('laser_service', laserReq)
@@ -155,6 +159,6 @@ while not rospy.is_shutdown():
             msg.linear.y = signs[1] * -1 
             msg.angular.z = signs[1] * -0.15
 
-        pub.publish(msg)
+    pub.publish(msg)
 
     rate.sleep()

@@ -11,7 +11,9 @@ def callback(msg):
     x = distances.position.x
     z = distances.position.z
 
-    if (x**2 + z**2)**0.5 < 100: # Distance small enough for 3d printer to make the dot
+    # This limit needs to be adjusted for the 3d printer to be able to reach the position
+    # The value is mostlikly in mm but is the same as the laser sends
+    if (x**2 + z**2)**0.5 < 40: # Distance small enough for 3d printer to make the dot
        response.action = "stop"
     elif abs(x) > abs(z): # We move in the largest error
         if x > 0:
