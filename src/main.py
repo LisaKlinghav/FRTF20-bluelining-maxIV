@@ -110,12 +110,11 @@ time = 0
 
 # start stop topic
 start = False
-def start_callback(msg):
-    start = msg
-startSub = rospy.Subscriber("/start", bool, start_callback)
+startSub = rospy.Subscriber("/start", Bool, start_callback)
 
 
 while not rospy.is_shutdown():
+    start = rospy.wait_for_message("/start", Bool)
     if start:
         msg = Twist() # Message to move the robot
 
