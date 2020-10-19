@@ -113,8 +113,7 @@ time = 0
 start = False
 def start_callback(msg): # empty callback
     global start
-    rospy.logdebug(msg)
-    start = msg
+    start = msg.data
 startSub = rospy.Subscriber("/start", Bool, start_callback)
 
 
