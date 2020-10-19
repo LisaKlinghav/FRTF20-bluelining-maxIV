@@ -129,7 +129,7 @@ while not rospy.is_shutdown():
         
         else:
             actionService = rospy.ServiceProxy('action_service', action_service)
-            actionReq = Pose()
+            actionReq = Pose() # response.distanceToGo
             actionReq.position.x = xs[index]
             actionReq.position.z = zs[index]
             action = actionService(actionReq)
@@ -141,6 +141,11 @@ while not rospy.is_shutdown():
                 index = 1 + index
 
             action = action.action
+
+            # Check if robot has moved to close to the laser
+            # position = response.position
+            # if (position.position.x**2 + position.position.z**2)**0.5 < 1 # Needs to be a value that represents the closest distance the robot is allowed to go to the laser. Probably in meters or mm
+            #       action = "stop"
 
             # Get orentation
             imu = rospy.wait_for_message("/imu", Imu)
