@@ -137,48 +137,48 @@ while not rospy.is_shutdown():
             actionService = rospy.ServiceProxy('action_service', action_service)
             actionReq = response.distanceToGo
 
-	    if (actionReq.position.x**2 + actionReq.position.z**2)**0.5 > 300:
-		speed = 10
-	    elif (actionReq.position.x**2 + actionReq.position.z**2)**0.5 > 100:
-		speed = 5
-	    else:
-		speed = 1
-            # actionReq.position.x = xs[index]
-            # actionReq.position.z = zs[index]
-            action = actionService(actionReq)
+        if (actionReq.position.x**2 + actionReq.position.z**2)**0.5 > 300:
+            speed = 10
+        elif (actionReq.position.x**2 + actionReq.position.z**2)**0.5 > 100:
+            speed = 5
+        else:
+            speed = 1
+        # actionReq.position.x = xs[index]
+        # actionReq.position.z = zs[index]
+        action = actionService(actionReq)
 
-            # time = 1 + time
-            # rospy.loginfo(time)
+        # time = 1 + time
+        # rospy.loginfo(time)
 
-            # if index < 5 and time % 100 == 0:
-            #     index = 1 + index
+        # if index < 5 and time % 100 == 0:
+        #     index = 1 + index
 
-            action = action.action
+        action = action.action
 
-            # Check if robot has moved to close to the laser
-            # position = response.position
-            # if (position.position.x**2 + position.position.z**2)**0.5 < 1 # Needs to be a value that represents the closest distance the robot is allowed to go to the laser. Probably in meters or mm
-            #       action = "stop"
+        # Check if robot has moved to close to the laser
+        # position = response.position
+        # if (position.position.x**2 + position.position.z**2)**0.5 < 1 # Needs to be a value that represents the closest distance the robot is allowed to go to the laser. Probably in meters or mm
+        #       action = "stop"
 
-            # Get orentation
-            imu = rospy.wait_for_message("/imu", Imu)
-            rotation = imu.orientation.w - imuInit.orientation.w 
+        # Get orentation
+        imu = rospy.wait_for_message("/imu", Imu)
+        rotation = imu.orientation.w - imuInit.orientation.w 
 
 
-            if rotation > 0 and abs(rotation) > 0.01:
-                msg.angular.z = rotSign * -0.1
-            elif rotation < 0 and abs(rotation) > 0.01:
-                msg.angular.z = rotSign * 0.1
-            elif action == "forward":
-                msg.linear.x = signs[0] * 0.1 * speed
-            elif action == "backward":
-                msg.linear.x = signs[0] * -0.1 * speed
-            elif action == "left":
-                msg.linear.y = signs[1] * 0.1 * speed
-                msg.angular.z = signs[1] * 0.015 * speed
-            elif action == "right":
-                msg.linear.y = signs[1] * -0.1 * speed
-                msg.angular.z = signs[1] * -0.015 * speed
+        if rotation > 0 and abs(rotation) > 0.01:
+            msg.angular.z = rotSign * -0.1
+        elif rotation < 0 and abs(rotation) > 0.01:
+            msg.angular.z = rotSign * 0.1
+        elif action == "forward":
+            msg.linear.x = signs[0] * 0.1 * speed
+        elif action == "backward":
+            msg.linear.x = signs[0] * -0.1 * speed
+        elif action == "left":
+            msg.linear.y = signs[1] * 0.1 * speed
+            msg.angular.z = signs[1] * 0.015 * speed
+        elif action == "right":
+            msg.linear.y = signs[1] * -0.1 * speed
+            msg.angular.z = signs[1] * -0.015 * speed
 
     pub.publish(msg)
 

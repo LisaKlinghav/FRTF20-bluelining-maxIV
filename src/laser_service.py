@@ -10,8 +10,9 @@ class UDP_connect:
         self._port = port
         self._buffersize = buffersize
 
+        
     def get_message(self):
-	UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         UDPServerSocket.bind((self._ip, self._port))
         UDPServerSocket.settimeout(5)
 
