@@ -10,13 +10,13 @@ class UDP_connect:
         self._port = port
         self._buffersize = buffersize
 
-        self._UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
-        self._UDPServerSocket.bind((self._ip, self._port))
-        self._UDPServerSocket.settimeout(5)
-
     def get_message(self):
+	UDPServerSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
+        UDPServerSocket.bind((self._ip, self._port))
+        UDPServerSocket.settimeout(5)
+
         try:
-            bytesAddressPair = self._UDPServerSocket.recvfrom(self._buffersize)
+            bytesAddressPair = UDPServerSocket.recvfrom(self._buffersize)
         except socket.timeout:
             return False 
         message = bytesAddressPair[0]
@@ -38,15 +38,15 @@ def callback(msg):
         # X,9.6879549857494169e+002,Y,-2.1040698523077076e+003,Z,-6.7986554237869018e+002 example line from laser
         distancesSplit = distancesMessage[0].split(",")
         distanceX = float(distancesSplit[1])
-        distanceZ = float(distancesSplit[5])
+        distanceZ = float(distancesSplit[3])
 
         distances = Pose()
         distances.position.x = distanceX
         distances.position.z = distanceZ
 
         positionSplit = positionMessage[0].split(",")
-        positionX = float(positionSplit[1])
-        positionZ = float(positionSplit[5])
+        positionX = float(positionSplit[1][0:4])
+        positionZ = float(positionSplit[5][0:4])
 
         position = Pose()
         position.position.x = positionX

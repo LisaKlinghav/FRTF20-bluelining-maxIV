@@ -1,7 +1,7 @@
 import socket
 
 # localIP     = "192.168.79.97"
-localIP     = "192.168.79.75"
+localIP     = "192.168.100.102"
 localPort   = 65433
 bufferSize  = 1024
  
